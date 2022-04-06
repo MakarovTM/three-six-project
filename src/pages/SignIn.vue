@@ -149,7 +149,8 @@ export default {
                 .then((response) => {
                     switch (response.data.status) {
                         case 0:
-                            this.$router.push({ name: "Chats" }) 
+                            this.$router.push({ name: "Chats" })
+                            localStorage.setItem("userId", response.data.user)
                             localStorage.setItem("token", response.data.token)
                         case 1:
                             this.signInMessage = response.data.message

@@ -62,8 +62,9 @@ export default createStore({
             */
 
             let token = localStorage.getItem("token")
+            let user  = localStorage.getItem("userId")
             
-            if (token === null) {
+            if (token === null || user === null) {
                 router.push({name: "SignIn"})
             } else {
 
