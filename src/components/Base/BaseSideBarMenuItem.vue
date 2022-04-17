@@ -1,6 +1,10 @@
 <template>
 	 <li class="nav-item">
-		<router-link class="nav-link" :to="{ name : this.propRouteName }">
+		<router-link 
+			class="nav-link" 
+			:class="{ active: this.propSideBarMenuItemActive }" 
+			:to="this.propRouteName"
+		>
 			<Icon :icon="this.propSideBarMenuItemIcon" />
 		</router-link>
 	</li>
@@ -23,14 +27,22 @@ export default {
 	},
 
 	props: {
+
 		propRouteName: {
-			type: String,
+			type: Object,
 			required: true
 		},
+
 		propSideBarMenuItemIcon: {
 			type: String,
 			required: true
+		},
+
+		propSideBarMenuItemActive: {
+			type: Boolean,
+			required: true
 		}
+
 	},
 
 }

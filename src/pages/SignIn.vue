@@ -102,7 +102,7 @@ export default {
             formdata.append("mail", this.userEmail)
 
             let config = {
-                url:    `${this.showApiHost}users/signIn/`,
+                url:    `${this.showApiHost}/users/signIn/`,
                 data:   formdata,
                 method: 'POST',
             }
@@ -140,7 +140,7 @@ export default {
             formdata.append("code", this.userAccessCode)
 
             let config = {
-                url:    `${this.showApiHost}users/checkAccessCode/`,
+                url:    `${this.showApiHost}/users/checkAccessCode/`,
                 data:   formdata,
                 method: 'POST',
             }

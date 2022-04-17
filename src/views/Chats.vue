@@ -16,6 +16,9 @@
                 :propChatsFilterString="this.chatsFilterString" 
             />
         </template>
+        <template v-slot:messenger-right-frame>
+            <ChatView />
+        </template>
     </BaseLayout>
 </template>
 
@@ -36,10 +39,13 @@ import ViewsHeader from "@/components/Base/BaseViewsHeader.vue"
 
 import BaseInputWithIcon from "@/components/Base/BaseInputWithIcon.vue"
 
+import ChatView from "@/components/ChatView.vue"
+
 
 export default {
 
     components: {
+        ChatView,
         ChatsList,
         BaseLayout,
         ViewsHeader,
@@ -55,7 +61,8 @@ export default {
     methods: {
 
         ...mapActions([
-            "checkUserSession"
+            "checkUserSession",
+            "updateSideBarActiveTab"
         ]),
 
         updateChatsFilterString: function(updatedChatsFilterString) {
@@ -72,6 +79,7 @@ export default {
 
     mounted() {
         this.checkUserSession()
+        this.updateSideBarActiveTab(3)
         document.title = "Чаты пользователя"
     }
     

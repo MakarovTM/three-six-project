@@ -3,37 +3,44 @@ import router from '@/router/index.js'
 
 import { createStore } from 'vuex'
 
+import indexChat from "./modules/index.chat"
+import indexProfile from "./modules/index.profile"
+import indexContacts from "./modules/index.contacts"
 
 export default createStore({
 
     state: {
 
-        apiHost: "http://127.0.0.1:8000/",
+        apiHost: "http://127.0.0.1:8000",
 
         sideBarMenuIcons: [
 
             {
                 id: 1,
                 name: "ic:baseline-people-alt",
-                routerPath: "Contats"
+                isActive: false,
+                routerPath: { name : "Contats" },
             },
 
             {
                 id: 2,
                 name: "ic:baseline-phone-forwarded",
-                routerPath: "Calls"
+                isActive: false,
+                routerPath: { name : "Calls" },
             },
 
             {
                 id: 3,
                 name: "entypo:chat",
-                routerPath: "Chats"
+                isActive: false,
+                routerPath: { name : "Chats" },
             },
 
             {
                 id: 4,
                 name: "healthicons:ui-user-profile",
-                routerPath: "Profile"
+                isActive: false,
+                routerPath: { name : "Profile", params: { id: localStorage.userId} },
             }
 
         ]
@@ -72,7 +79,7 @@ export default createStore({
                 data.append("token", token)
 
                 let config = {
-                    url:    `${state.apiHost}users/checkUserSession/`,
+                    url:    `${state.apiHost}/users/checkUserSession/`,
                     data :  data,
                     method: "post",
                 }
@@ -93,12 +100,31 @@ export default createStore({
             }
 
 
+        },
+
+        updateSideBarActiveTab: function({ state }, activeSideBarId) {
+
+            /**
+                * Автор:        Макаров Алексей
+                * Описание:     Обновление активной вкладки мессенджера
+            */
+
+            state.sideBarMenuIcons.forEach(function(item, i, arr) {
+                if (item.id === activeSideBarId) {
+                    item.isActive = true
+                } else {
+                    item.isActive = false
+                }
+            })
+
         }
 
     },
 
     modules: {
-        
+        indexChat,
+        indexProfile,
+        indexContacts,
     }
 
 })

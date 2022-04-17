@@ -25,6 +25,9 @@
                 :propContactsFilterString="this.contactsFilterString" 
             />
         </template>
+        <template v-slot:messenger-right-frame>
+            <ChatView />
+        </template>
     </BaseLayout>
 
 </template>
@@ -48,9 +51,12 @@ import ContactsModalTreat from "@/components/ContactsModalTreat.vue"
 
 import BaseInputWithIcon from "@/components/Base/BaseInputWithIcon.vue"
 
+import ChatView from "@/components/ChatView.vue"
+
 export default {
 
     components: {
+        ChatView,
         BaseLayout,
         ViewsHeader,
         ContactsList,
@@ -68,7 +74,8 @@ export default {
     methods: {
 
         ...mapActions([
-            "checkUserSession"
+            "checkUserSession",
+            "updateSideBarActiveTab"
         ]),
 
         changeModalTreatOpenStatus: function() {
@@ -98,6 +105,7 @@ export default {
 
     mounted() {
         this.checkUserSession()
+        this.updateSideBarActiveTab(1)
         document.title = "Контакты пользователя"
     }
 

@@ -3,8 +3,8 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title font-size-16" id="addContact-exampleModalLabel">Add Contact</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="this.closeTreatContactModal">
+                    <h5 class="modal-title font-size-16">Добавить контакт</h5>
+                    <button type="button" class="close" @click="this.closeTreatContactModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -58,9 +58,11 @@ export default {
 </script>
 
 <style>
+
 .modal {
     background: black;
-	z-index: 99999;
-	opacity: 0.85;	
+	z-index: 100000;
+	opacity: 0.9;	
 }
+
 </style>

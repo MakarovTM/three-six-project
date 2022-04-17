@@ -7,7 +7,8 @@
 					:key="sideBarMenuItem.id" 
 					
 					:propRouteName="sideBarMenuItem.routerPath" 
-					:propSideBarMenuItemIcon="sideBarMenuItem.name" 
+					:propSideBarMenuItemIcon="sideBarMenuItem.name"
+					:propSideBarMenuItemActive="sideBarMenuItem.isActive"
 				/>
             </ul>
         </div>

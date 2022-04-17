@@ -7,9 +7,10 @@
                         <ul class="list-unstyled contact-list">
                             <ContactsListItem 
                                 v-for="contactItem in this.filteredContactsList" 
-                                :key="contactItem.index"
+                                :key="contactItem.id"
                                 :propContactId="contactItem.id"
-                                :propContactName="contactItem.name" 
+                                :propContactName="contactItem.contact_two.name"
+                                :propContactEmail="contactItem.contact_two.mail"
                             />
                         </ul>
                     </div>
@@ -27,6 +28,8 @@
     * Описание: Отображение списка контактов пользователя
 */
 
+import { mapActions, mapGetters }   from "vuex"
+
 import ContactsListItem from "@/components/ContactsListItem.vue"
 
 export default {
@@ -42,18 +45,19 @@ export default {
         }
     },
 
-    data() {
-        return {
-            contactsList: [
-                {
-                    id: 2,
-                    name: "Макаров Алексей"
-                }
-            ]
-        }
+    methods: {
+
+        ...mapActions([
+            "contactsListUpdate"
+        ])
+
     },
 
     computed: {
+
+        ...mapGetters([
+            "showContactsList"
+        ]),
 
         filteredContactsList: function() {
 
@@ -62,12 +66,16 @@ export default {
                 * Описание: Фильтрация списка контактов по ключевому слову
             */
 
-            return this.contactsList.filter(row => {
-                return row.name.toLowerCase().includes(this.propContactsFilterString.toLowerCase())
+            return this.showContactsList.filter(row => {
+                return row.contact_two.name.toLowerCase().includes(this.propContactsFilterString.toLowerCase())
             })
 
         }
 
+    },
+
+    mounted() {
+        this.contactsListUpdate()
     }
     
 }
