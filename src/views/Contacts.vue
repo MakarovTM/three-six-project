@@ -1,8 +1,8 @@
 <template>
 
     <ContactsModalTreat
-        v-if="this.contactsModalTreatOpened"
-        @closeTreatContactModal="this.changeModalTreatOpenStatus"
+        v-if="this.showContactsModalStatus"
+        @closeTreatContactModal="this.contactsModalStatusUpdate"
     />
 
     <BaseLayout>
@@ -10,7 +10,7 @@
             <ViewsHeader
                 propViewHeaderTitle="Контакты"
                 propViewHeaderModalIcon="akar-icons:person-add"
-                @modalOpenButtonClicked="this.changeModalTreatOpenStatus"
+                @modalOpenButtonClicked="this.contactsModalStatusUpdate"
             >
                 <template v-slot:view-header-search-element>
                     <BaseInputWithIcon
@@ -40,7 +40,7 @@
     * Описание: Представление для просмотра списка контактов пользователя
 */
 
-import { mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 import BaseLayout from "@/layouts/BaseLayout.vue"
 
@@ -71,11 +71,20 @@ export default {
         }
     },
 
+    computed: {
+        ...mapGetters([
+            "showContactsModalStatus"
+        ])
+    },
+
     methods: {
 
         ...mapActions([
             "checkUserSession",
-            "updateSideBarActiveTab"
+            "updateSideBarActiveTab",
+
+            "contactsListUpdate",
+            "contactsModalStatusUpdate"
         ]),
 
         changeModalTreatOpenStatus: function() {
@@ -107,6 +116,9 @@ export default {
         this.checkUserSession()
         this.updateSideBarActiveTab(1)
         document.title = "Контакты пользователя"
+
+        this.contactsListUpdate()
+
     }
 
 }

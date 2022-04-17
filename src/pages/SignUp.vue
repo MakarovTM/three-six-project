@@ -100,10 +100,12 @@ export default {
             formdata.append("mail", this.userEmail)
 
             let config = {
-                url:    `${this.showApiHost}users/signUp/`,
+                url:    `${this.showApiHost}/users/signUp/`,
                 data:   formdata,
                 method: 'POST',
             }
+
+            console.log(config)
 
             axios(config)
                 .then((response) => {
@@ -118,7 +120,7 @@ export default {
                 })
                 .catch((error) => {
                     this.signInMessage = "Произошла ошибка при выполнении запроса"
-                    console.log(error);
+                    console.log(error)
                 });
 
         },

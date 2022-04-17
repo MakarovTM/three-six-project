@@ -4,16 +4,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title font-size-16"> {{ this.propsModalTitle }} </h5>
-                    <button type="button" class="close" @click="this.closeTreatContactModal">
+                    <button type="button" class="close" @click="this.closeModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body p-4">
-                    <slot name="messenger-centered-card"></slot>
+                    <slot name="modal-body-content"></slot>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Invite Contact</button>
+                    <slot name="modal-footer-content"></slot>
                 </div>
             </div>
         </div>
@@ -24,8 +23,8 @@
 <script>
 
 /**
-    * Автор:    Макаров Алексей
-    * Описание: Модальное окно для приглашения пользователя в чат 
+    * Автор:        Макаров Алексей
+    * Описание:     Модальное окно в UI мессенджера
 */
 
 export default {
@@ -42,14 +41,14 @@ export default {
     
     methods: {
 
-        closeTreatContactModal: function() {
+        closeModal: function() {
 
             /**
                 * Автор:    Макаров Алексей
                 * Описание: Отправляем в родитель событие для свертывания модального окна
             */
 
-           this.$emit("closeTreatContactModal")
+           this.$emit("closeModal")
 
         }
 
@@ -64,7 +63,7 @@ export default {
 .modal {
     background: black;
 	z-index: 99999;
-	opacity: 0.85;	
+	opacity: 0.95;	
 }
 
 </style>

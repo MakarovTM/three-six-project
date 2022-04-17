@@ -4,6 +4,7 @@ import router from '@/router/index.js'
 import { createStore } from 'vuex'
 
 import indexChat from "./modules/index.chat"
+import indexChats from "./modules/index.chats"
 import indexProfile from "./modules/index.profile"
 import indexContacts from "./modules/index.contacts"
 
@@ -123,6 +124,7 @@ export default createStore({
 
     modules: {
         indexChat,
+        indexChats,
         indexProfile,
         indexContacts,
     }

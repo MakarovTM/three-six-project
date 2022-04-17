@@ -28,7 +28,7 @@
     * Описание: Отображение списка контактов пользователя
 */
 
-import { mapActions, mapGetters }   from "vuex"
+import { mapGetters }   from "vuex"
 
 import ContactsListItem from "@/components/ContactsListItem.vue"
 
@@ -43,14 +43,6 @@ export default {
             type: String,
             required: true
         }
-    },
-
-    methods: {
-
-        ...mapActions([
-            "contactsListUpdate"
-        ])
-
     },
 
     computed: {
@@ -73,10 +65,6 @@ export default {
         }
 
     },
-
-    mounted() {
-        this.contactsListUpdate()
-    }
     
 }
 

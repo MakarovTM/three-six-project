@@ -12,8 +12,8 @@
                 <h5 class="text-truncate font-size-15 mb-1">
                     {{ this.propContactName }}
                 </h5>
-                <p class="chat-user-message text-truncate mb-0">
-                    {{ this.propChatLastMessage }}
+                <p :class="this.chatLastMessageShowParams.class" >
+                    {{ this.chatLastMessageShowParams.placeholder }}
                 </p>
             </div>
             <div class="font-size-11">
@@ -47,7 +47,7 @@ export default {
         },
 
         propChatLastMessage: {
-            type: String,
+            type: Number,
             required: true
         },
 
@@ -55,6 +55,21 @@ export default {
             type: String,
             required: true
         }
+    },
+
+    computed: {
+
+        chatLastMessageShowParams: function(chatFullRead) {
+
+            /**
+                * Автор:        Макаров Алексей
+                * Описание:     Вычисление параметров отображения информации о чате
+            */
+
+            return this.propChatLastMessage === 1 ? {class: "chat-user-message text-truncate mb-0 text-success", placeholder: "Нет новых сообщений"} : {class: "chat-user-message text-truncate mb-0 text-danger", placeholder: "Новое сообщение"}
+
+        }
+
     },
 
     methods: {

@@ -61,8 +61,9 @@ export default {
     methods: {
 
         ...mapActions([
+            "chatsListUpdate",
             "checkUserSession",
-            "updateSideBarActiveTab"
+            "updateSideBarActiveTab",
         ]),
 
         updateChatsFilterString: function(updatedChatsFilterString) {
@@ -78,6 +79,7 @@ export default {
     },
 
     mounted() {
+        this.chatsListUpdate()
         this.checkUserSession()
         this.updateSideBarActiveTab(3)
         document.title = "Чаты пользователя"

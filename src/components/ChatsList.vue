@@ -10,10 +10,10 @@
                                 v-for="chatsItem in this.filteredChatsList" 
                                 :key="chatsItem.id" 
 
-                                :propChatId="chatsItem.chatId"
-                                :propContactName="chatsItem.contactName"
+                                :propChatId="chatsItem.id"
+                                :propContactName="chatsItem.recipientName"
                                 :propChatLastMessage="chatsItem.chatLastMessage" 
-                                :propChatLastMessageTs="chatsItem.chatLastMessageTs" 
+                                :propChatLastMessageTs="chatsItem.ts" 
 
                             />
                         </ul>
@@ -32,7 +32,9 @@
     * Описание: Отображение списка контактов пользователя
 */
 
-import ChatsListItem from "@/components/ChatsListItem.vue"
+import { mapGetters } from "vuex"
+
+import ChatsListItem  from "@/components/ChatsListItem.vue"
 
 export default {
 
@@ -47,20 +49,42 @@ export default {
         }
     },
 
-    data() {
-        return {
-            chatsList: [
-                {
-                    chatId: 1,
-                    contactName: "Макаров Алексей",
-                    chatLastMessage: "Привет мир",
-                    chatLastMessageTs: "29 март 15:25"
-                },
-            ]
-        }
-    },
-
     computed: {
+
+        ...mapGetters([
+            "showChatsList"
+        ]),
+
+        parserChatsList: function() {
+            
+            /**
+                * Автор:        Макаров Алексей
+                * Описание:     Выполнение обработки загруженного списка чатов 
+            */
+
+            var parsedChatsList = []
+
+            for (let chatItem of this.showChatsList) {
+
+                if (parseInt(localStorage.userId) === chatItem.contactOne.id) {
+                    var recipientData = chatItem.contactTwo
+                } else {
+                    var recipientData = chatItem.contactOne
+                }
+
+                parsedChatsList.push({
+                    id: chatItem.id,
+                    ts: chatItem.updateTs,
+                    recipientName: recipientData.name,
+                    chatLastMessage: chatItem.fullRead
+                })
+
+            }
+
+            return parsedChatsList
+
+
+        },
 
         filteredChatsList: function() {
 
@@ -69,8 +93,8 @@ export default {
                 * Описание: Фильтрация списка чатов по контакту
             */
 
-            return this.chatsList.filter(row => {
-                return row.contactName.toLowerCase().includes(this.propChatsFilterString.toLowerCase())
+            return this.parserChatsList.filter(row => {
+                return row.recipientName.toLowerCase().includes(this.propChatsFilterString.toLowerCase())
             })
 
         }
