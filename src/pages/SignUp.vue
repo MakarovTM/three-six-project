@@ -10,31 +10,41 @@
                         <div class="p-3">
 
                             <BaseInputWithTitle 
-                                propInputTitle="Введите адрес эл. почты" 
-                                @updateInputValue="this.updateUserEmail" 
+                                propInputTitle="Введите адрес эл. почты"
+                                :propInputRegexPattern="showRegexPatterns.regexEmail.pattern"
+                                :propInputRegexPatternInvalidMessage="showRegexPatterns.regexEmail.message"
+                                @updateInputValue="this.updateUserEmail"
+                                @updateInputValueValidation="this.updateUserEmailValidation"
                             />
 
                             <BaseInputWithTitle 
-                                propInputTitle="Введите имя пользователя" 
-                                @updateInputValue="this.updateUserName" 
+                                propInputTitle="Введите имя пользователя"
+                                :propInputRegexPattern="showRegexPatterns.regexUserFullName.pattern"
+                                :propInputRegexPatternInvalidMessage="showRegexPatterns.regexUserFullName.message"
+                                @updateInputValue="this.updateUserFullName"
+                                @updateInputValueValidation="this.updateUserFullNameValidation"
                             />
 
-                            <div class="d-grid">
-                                <button 
-                                    style="width: 100%;" 
-                                    class="btn btn-primary waves-effect waves-light" 
-                                    @click="this.signUpButtonClicked"
-                                >
-                                    Зарегистрироваться
-                                </button>
-                            </div>
+                            <BaseInputWithTitle 
+                                propInputTitle="О себе"
+                                :propInputRegexPattern="showRegexPatterns.regexUserAbout.pattern"
+                                :propInputRegexPatternInvalidMessage="showRegexPatterns.regexUserAbout.message"
+                                @updateInputValue="this.updateUserAbout"
+                                @updateInputValueValidation="this.updateUserAboutValidation"
+                            />
+
+                            <BaseButton
+                                propButtonTitle="Зарегистрироваться"
+                                :propButtonDisabled="!this.formDataValidated"
+                                @buttonClicked="this.userSignUp"
+                            />
 
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mb-4">
-                    <p class="text-muted mb-4"> {{ this.signUpMessage }} </p>
+                    <p class="text-muted mb-4"> </p>
                     <router-link class="nav-link" :to="{ name : 'SignIn' }">
                         Страница авторизации
 		            </router-link>
@@ -49,24 +59,25 @@
 <script>
 
 /**
-    * Автор:        Макаров Алексей
-    * Описание:     Страница авторизации пользователя
+    * Автор:                Макаров Алексей
+    * Описание:             Страница авторизации пользователя
 */
 
-import axios from "axios";
+import axios from "axios"
 
-import { mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 import BareLayout from "@/layouts/BareLayout.vue"
 
+import BaseButton from "@/components/Base/BaseButton.vue"
 import BaseInputWithTitle from "@/components/Base/BaseInputWithTitle.vue"
 
 
 export default {
 
     components: {
-
         BareLayout,
+        BaseButton,
         BaseInputWithTitle,
 
     },
@@ -74,70 +85,139 @@ export default {
     data() {
         return {
 
-            userName: "",
-            userEmail: "",
+            userAbout: null,
+            userAboutValidation: false,
 
-            signUpMessage: "",
+            userEmail: null,
+            userEmailValidation: false,
+
+            userFullName: null,
+            userFullNameValidation: false
 
         }
     },
 
     methods: {
 
-        updateUserName:   function(updatedUserName)   { this.userName       = updatedUserName   },
-        updateUserEmail:  function(updatedUserEmail)  { this.userEmail      = updatedUserEmail  },
+        ...mapActions([
+            "singInAccessCode"
+        ]),
 
-        signUpButtonClicked: function() {
+        updateUserEmail: function(updatedUserEmail) {
+            this.userEmail = updatedUserEmail
+        },
+
+        updateUserEmailValidation: function(updatedUserEmailValidation) {
+            this.userEmailValidation = updatedUserEmailValidation
+        },
+
+        updateUserAbout: function(updatedUserAbout) {
+            this.userAbout = updatedUserAbout
+        },
+
+        updateUserAboutValidation: function(updatedUserAboutValidation) {
+            this.userAboutValidation = updatedUserAboutValidation
+        },
+
+        updateUserFullName: function(updatedUserFullName) {
+            this.userFullName = updatedUserFullName
+        },
+
+        updateUserFullNameValidation: function(updatedUserFullNameValidation) {
+            this.userFullNameValidation = updatedUserFullNameValidation
+        },
+
+        userSignUp: function() {
 
             /**
-                * Автор:        Макаров Алексей
-                * Описание:     Выполнение авторизации пользователя
+                * Автор:    Макаров Алексей
+                * Описание: Создание аккаунта пользователя
             */
 
-            var formdata = new FormData()
+            let data = new FormData()
 
-            formdata.append("name", this.userName)
-            formdata.append("mail", this.userEmail)
+            data.append("email", this.userEmail)
+            data.append("about", this.userAbout)
+            data.append("full_name", this.userFullName)
 
             let config = {
-                url:    `${this.showApiHost}/users/signUp/`,
-                data:   formdata,
-                method: 'POST',
+                url:    `${this.showApiHost}/users/create`,
+                data :   data,
+                method: "POST",
             }
-
-            console.log(config)
 
             axios(config)
                 .then((response) => {
                     switch (response.data.status) {
-                        case 0:
-                            this.signUpMessage = response.data.message
-                        case 1:
-                            this.signUpMessage = response.data.message
-                        case 2:
-                            this.signUpMessage = response.data.message
+                        case 0: {
+                            this.$notify(
+                                {
+                                    type: "success",
+                                    text: response.data.reason
+                                }
+                            )
+                            this.$router.push(
+                                {
+                                    name: "SignIn"
+                                }
+                            )
+                            break
+                        }
+                        case 1: {
+                            this.$notify(
+                                {
+                                    type: "warn",
+                                    text: response.data.reason
+                                }
+                            )
+                            break
+                        }
                     }
                 })
                 .catch((error) => {
-                    this.signInMessage = "Произошла ошибка при выполнении запроса"
-                    console.log(error)
+                   this.$notify(
+                       {
+                           type: "danger",
+                           text: "Произошла неизвестная ошибка"
+                       }
+                   )
+                   console.log(error)
                 });
 
-        },
+        }
 
     },
 
     computed: {
 
-        ...mapGetters([
-            "showApiHost"
-        ]),
+        ...mapGetters(
+            [
+                "showApiHost",
+                "showRegexPatterns"
+            ]
+        ),
+
+        formDataValidated: function() {
+
+            /**
+                * Автор:    Макаров Алексей
+                * Описание: Выполнение проверки полей формы    
+            */
+
+            return this.userAboutValidation && this.userEmailValidation && this.userFullNameValidation
+
+        }
 
     },
 
     mounted() {
+
+        /**
+            * Автор:        Макаров Алексей
+            * Описание:     Жизненный хук приложения
+        */
+
         document.title = "Создание аккаунта пользователя"
-        localStorage.removeItem("token")
     }
     
 }

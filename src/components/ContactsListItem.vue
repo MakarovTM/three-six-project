@@ -1,41 +1,39 @@
 <template>
     <li>
-        <router-link :to="{ name: 'Profile', params: { id: this.propContactId }}">
-            <div class="media">
-                <div class="chat-user-img mr-3">
-                    <div class="avatar-xs">
-                        <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                            {{ this.propContactName.charAt(0) }}
-                        </span>
-                    </div>
-                </div>
-                <div class="media-body overflow-hidden">
-                    <h5 class="text-truncate font-size-15 mb-0">
-                        {{ this.propContactName }}
-                    </h5>
-                    <p class="chat-user-message text-truncate mb-0">
-                    {{ this.propContactEmail }}
-                    </p>
-                </div>
-                <div class="dropdown b-dropdown btn-group">
-                    <button 
-                        type="button" class="btn dropdown-toggle btn-white text-muted p-0" 
-                        @click="this.updateContactEditDropDown">
-                            <Icon icon="ic:baseline-format-list-bulleted" />
-                    </button>
-                    <ul role="menu" :class="this.contactEditDropDownClass">
-                        <a class="dropdown-item" @click="this.blockContact">
-                            <Icon icon="ic:baseline-block" />
-                            Блокировать
-                        </a>
-                        <a class="dropdown-item" @click="this.deleteContact"> 
-                            <Icon icon="ic:baseline-delete" />
-                            Удалить
-                        </a>
-                    </ul>
+        <div class="media">
+            <div class="chat-user-img mr-3">
+                <div class="avatar-xs">
+                    <span class="avatar-title rounded-circle bg-soft-primary text-primary">
+                        {{ this.propContactName.charAt(0) }}
+                    </span>
                 </div>
             </div>
-        </router-link>
+            <div class="media-body overflow-hidden">
+                <h5 class="text-truncate font-size-15 mb-0">
+                    {{ this.propContactName }}
+                </h5>
+                <p class="chat-user-message text-truncate mb-0">
+                {{ this.propContactEmail }}
+                </p>
+            </div>
+            <div class="dropdown b-dropdown btn-group">
+                <button 
+                    type="button" class="btn dropdown-toggle btn-white text-muted p-0" 
+                    @click="this.updateContactEditDropDown">
+                        <Icon icon="ic:baseline-format-list-bulleted" />
+                </button>
+                <ul role="menu" :class="this.contactEditDropDownClass">
+                    <router-link class="dropdown-item" :to="{ name: 'Profile', params: { id: propContactId }}">
+                        <Icon icon="bxs:user" />
+                        Профиль
+                    </router-link>
+                    <a class="dropdown-item" @click="this.deleteContact"> 
+                        <Icon icon="ic:baseline-delete" />
+                        Удалить
+                    </a>
+                </ul>
+            </div>
+        </div>
     </li>
 </template>
 
@@ -43,8 +41,8 @@
 <script>
 
 /**
-    * Автор:    Макаров Алексей
-    * Описание: Отображение строки в списке контактов пользователя
+    * Автор:        Макаров Алексей
+    * Описание:     Отображение строки в списке контактов пользователя
 */
 
 import { Icon } from '@iconify/vue'
@@ -105,17 +103,6 @@ export default {
             */
 
             this.contactEditDropDownOpen = !this.contactEditDropDownOpen
-
-        },
-
-        blockContact: function() {
-
-            /**
-                * Автор:        Макаров Алексей
-                * Описание:     Блокировка пользовтеля из реестра контактов 
-            */
-        
-            console.log("Блокировать контакт с id = ", this.propContactId)
 
         },
 

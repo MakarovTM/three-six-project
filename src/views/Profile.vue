@@ -1,24 +1,43 @@
 <template>
 
+    <ProfileModalEdit 
+        v-if="this.showProfileModalStatus && !this.showProfileLoadStatus"
+        :propUserFullName="showProfileData.full_name"
+        :propUserAbout="showProfileData.about"
+        @closeProfileEditModal="this.profileEditModalAction(2)"
+    />
+
     <BaseLayout>
+
         <template v-slot:messenger-left-frame>
+
             <ViewsHeader
+                v-if="this.userOwnProfile"
                 propViewHeaderTitle="Профиль"
-            />
-            
-            <ProfilePublic
-                :propUserName="this.showProfilePublic.name"
-                :propUserEmail="this.showProfilePublic.mail"       
+                propViewHeaderModalIcon="akar-icons:chat-edit"
+                @modalOpenButtonClicked="this.profileEditModalAction(1)"
             />
 
-            <ProfilePrivate 
-                v-if="this.userOwnProfile"
+            <ViewsHeader
+                v-if="!this.userOwnProfile"
+                propViewHeaderTitle="Профиль"
+            />
+
+            <LoadingPage v-if="this.showProfileLoadStatus" />
+
+            <ProfileDetails
+                v-if="!this.showProfileLoadStatus"
+                :propUserName="showProfileData.full_name"
+                :propUserEmail="showProfileData.email"
+                :propUserAbout="showProfileData.about"
             />
 
         </template>
+
         <template v-slot:messenger-right-frame>
             <ChatView />
         </template>
+
     </BaseLayout>
 
 </template>
@@ -28,27 +47,30 @@
 
 /**
     * Автор:    Макаров Алексей
-    * Описание: Представление для просмотра списка контактов пользователя
+    * Описание: Представление для просмотра профиля пользователя
 */
 
 import { mapActions, mapGetters } from "vuex"
 
-import BaseLayout from "@/layouts/BaseLayout.vue"
-
-import ViewsHeader from "@/components/Base/BaseViewsHeader.vue"
-
-import ProfilePublic from "@/components/ProfilePublic.vue"
-import ProfilePrivate from "@/components/ProfilePrivate.vue"
 import ChatView from "@/components/ChatView.vue"
+import LoadingPage from "@/plugs/LoadingPage.vue"
+import BaseLayout from "@/layouts/BaseLayout.vue"
+import BaseButton from "@/components/Base/BaseButton.vue"
+import ProfileDetails from "@/components/ProfileDetails.vue"
+import ViewsHeader from "@/components/Base/BaseViewsHeader.vue"
+import ProfileModalEdit from "@/components/ProfileModalEdit.vue"
+
 
 export default {
 
     components: {
         ChatView,
+        BaseButton,
         BaseLayout,
+        LoadingPage,
         ViewsHeader,
-        ProfilePublic,
-        ProfilePrivate
+        ProfileDetails,
+        ProfileModalEdit,
     },
 
     data() {
@@ -61,24 +83,45 @@ export default {
 
         ...mapActions([
             "checkUserSession",
-            "profilePublicLoad",
+            "uploadProfileData",
             "updateSideBarActiveTab",
+            "profileEditModalUpdateStatus"
         ]),
+
+        profileEditModalAction: function(mode) {
+
+            /**
+                * Автор:        Макаров Алексей
+                * Описание:     Выполнение взаимодействия с окном
+                *               редактирования профиля пользователя 
+            */
+
+            if (mode === 1) {
+                this.profileEditModalUpdateStatus()
+            }
+            else {
+                this.uploadProfileData(this.userId)
+                this.profileEditModalUpdateStatus()
+            }
+
+        }
 
     },
 
     computed: {
 
         ...mapGetters([
-            "showProfilePublic",
-            "showProfilePublicLoadStatus"
+            "showProfileData",
+            "showProfileLoadStatus",
+            "showProfileModalStatus"
         ]),
 
         userOwnProfile: function() {
 
             /**
                 * Автор:        Макаров Алексей
-                * Описание:     Проверка профиля на принадлежность активному пользователю
+                * Описание:     Проверка профиля на
+                *               принадл. активному пользователю
             */
 
             return localStorage.userId === this.userId ? true : false
@@ -87,10 +130,8 @@ export default {
     },
 
     mounted() {
-        this.userId = this.$route.params.id
-        this.checkUserSession()
-        this.updateSideBarActiveTab(4)
-        this.profilePublicLoad(this.userId)
+        this.updateSideBarActiveTab(3)
+        this.uploadProfileData(this.userId)
         document.title = "Профиль пользователя"
     }
 

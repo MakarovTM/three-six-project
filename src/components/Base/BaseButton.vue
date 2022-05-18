@@ -1,5 +1,6 @@
 <template>
     <button 
+        style="width: 100%" 
         type="button" class="btn btn-primary" 
         :disabled="this.propButtonDisabled"
         @click="this.buttonClicked"

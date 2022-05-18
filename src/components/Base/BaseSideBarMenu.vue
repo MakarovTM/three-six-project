@@ -12,15 +12,6 @@
 				/>
             </ul>
         </div>
-        <div class="flex-lg-column d-none d-lg-block">
-            <ul class="nav side-menu-nav justify-content-center">
-                <li class="nav-item">
-					<router-link class="nav-link" :to="{ name : 'SignIn' }">
-						<Icon icon="uil:exit" />
-					</router-link>
-				</li>
-            </ul>
-        </div>
     </div>
 </template>
 

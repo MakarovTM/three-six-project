@@ -1,47 +1,34 @@
 /**
     * Автор:        Макаров Алексей
-    * Описание:     Файл vuex для списка чатов пользователя
+    * Описание:     Файл vuex для хранения информации о
+    *               состоянии представления просмотра чатов пользователя
 */
-
-import axios from "axios"
 
 const state = {
 
-    chatsList: [],
-    chatsListLoadStatus: false
+    chatsAddModalOpened: false
 
 }
 
 const getters = {
 
-    showChatsList: (state) => { return state.chatsList },
-    showChatsListLoadStatus: (state) => { return state.chatsListLoadStatus }
+    showChatsAddModalStatus: (state) => { return state.chatsAddModalOpened }
 
 }
 
 const actions = {
 
-    chatsListUpdate: function( {state, rootState} ) {
+    updateChatsAddModalStatus({ state }) {
 
         /**
             * Автор:        Макаров Алексей
-            * Описание:     Выполнение обновления списка чатов пользователя 
+            * Описание:     Изменение статуса модального
+            *               окна по созданию нового чата пользователя
         */
 
-        let config = {
-            url:    `${rootState.apiHost}/chats/showUserChats/${localStorage.userId}`,
-            method: "GET",
-        }
+        state.chatsAddModalOpened = !state.chatsAddModalOpened
 
-        axios(config)
-            .then((response) => {
-                state.chatsList = response.data.chatsList
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-
-    }
+    },
 
 }
 

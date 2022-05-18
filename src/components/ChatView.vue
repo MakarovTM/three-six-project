@@ -29,23 +29,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-2 col-2">
-                            <ul class="list-inline user-chat-nav text-end mb-0">
-
-                                <li class="list-inline-item d-lg-inline-block me-2 ms-0">
-                                    <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target="#audiocallModal">
-                                        <Icon icon="bxs:phone-call" />
-                                    </button>
-                                </li>
-
-                                <li class="list-inline-item d-lg-inline-block me-2 ms-0">
-                                    <button type="button" class="btn nav-btn" data-bs-toggle="modal" data-bs-target="#audiocallModal">
-                                        <Icon icon="wpf:video-call" />
-                                    </button>
-                                </li>
-
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div class="chat-conversation p-3 p-lg-4" data-simplebar="init">

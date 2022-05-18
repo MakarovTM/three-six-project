@@ -9,34 +9,35 @@
                     <div class="card-body p-4">
                         <div class="p-3">
 
-                            <BaseInputWithTitle 
+                            <BaseInputWithTitle
                                 v-if="this.signInStage == 1" 
-                                propInputTitle="Введите адрес эл. почты" 
-                                @updateInputValue="this.updateUserEmail" 
+                                propInputTitle="Введите адрес эл. почты"
+                                :propInputRegexPattern="showRegexPatterns.regexEmail.pattern"
+                                :propInputRegexPatternInvalidMessage="showRegexPatterns.regexEmail.message"
+                                @updateInputValue="this.updateUserEmail"
+                                @updateInputValueValidation="this.updateUserEmailValidation"
                             />
 
-                            <BaseInputWithTitle 
+                            <BaseInputWithTitle
                                 v-if="this.signInStage == 2" 
-                                propInputTitle="Введите полученный код" 
-                                @updateInputValue="this.updateAccessCode" 
+                                propInputTitle="Введите одноразовый код доступа"
+                                :propInputRegexPattern="showRegexPatterns.regexDigitsOnly.pattern"
+                                :propInputRegexPatternInvalidMessage="showRegexPatterns.regexDigitsOnly.message"
+                                @updateInputValue="this.updateUserAccessCode"
+                                @updateInputValueValidation="this.updateUserAccessCodeValidation"
                             />
 
-                            <div class="d-grid">
-                                <button 
-                                    style="width: 100%;" 
-                                    class="btn btn-primary waves-effect waves-light" 
-                                    @click="this.signInButtonClicked"
-                                >
-                                    {{ this.signInButtonTitle }}
-                                </button>
-                            </div>
+                            <BaseButton
+                                :propButtonTitle="this.signInButtonTitle"
+                                :propButtonDisabled="!(this.userEmailValidation || this.userAccessCodeValidation)"
+                                @buttonClicked="this.userSignUp"
+                            />
 
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mb-4">
-                    <p class="text-muted mb-4"> {{ this.signInMessage }} </p>
                     <router-link class="nav-link" :to="{ name : 'SignUp' }">
                         Создать аккаунт
 		            </router-link>
@@ -61,6 +62,7 @@ import { mapGetters } from "vuex"
 
 import BareLayout from "@/layouts/BareLayout.vue"
 
+import BaseButton from "@/components/Base/BaseButton.vue"
 import BaseInputWithTitle from "@/components/Base/BaseInputWithTitle.vue"
 
 
@@ -69,6 +71,7 @@ export default {
     components: {
 
         BareLayout,
+        BaseButton,
         BaseInputWithTitle,
 
     },
@@ -77,18 +80,35 @@ export default {
         return {
 
             signInStage: 1,
-            signInMessage: "",
+
+            signInToken: null,
 
             userEmail: "",
+            userEmailValidation: false,
+
             userAccessCode: "",
+            userAccessCodeValidation: false
 
         }
     },
 
     methods: {
 
-        updateUserEmail:  function(updatedUserEmail)  { this.userEmail      = updatedUserEmail  },
-        updateAccessCode: function(updatedAccessCode) { this.userAccessCode = updatedAccessCode },
+        updateUserEmail: function(updatedUserEmail) {
+            this.userEmail = updatedUserEmail
+        },
+
+        updateUserEmailValidation: function(updatedUserEmailValidation) {
+            this.userEmailValidation = updatedUserEmailValidation
+        },
+
+        updateUserAccessCode: function(updatedUserAccessCode) {
+            this.userAccessCode = updatedUserAccessCode
+        },
+
+        updateUserAccessCodeValidation: function(updatedUserAccessCodeValidation) {
+            this.userAccessCodeValidation = updatedUserAccessCodeValidation
+        },
 
         checkUserEmail: function() {
 
@@ -99,10 +119,10 @@ export default {
 
             var formdata = new FormData()
 
-            formdata.append("mail", this.userEmail)
+            formdata.append("email", this.userEmail)
 
             let config = {
-                url:    `${this.showApiHost}/users/signIn/`,
+                url:    `${this.showApiHost}/users/login/code/create`,
                 data:   formdata,
                 method: 'POST',
             }
@@ -112,18 +132,26 @@ export default {
                     switch (response.data.status) {
                         case 0:
                             this.signInStage   = 2
-                            this.signInMessage = response.data.message
+                            this.signInToken = response.data.accessToken
+                            break
                         case 1:
-                            this.signInMessage = response.data.message
-                        case 2:
-                            this.signInMessage = response.data.message
-                            
-                            response.data.message
+                            this.$notify(
+                                {
+                                    type: "warn",
+                                    text: response.data.reason
+                                }
+                            )
+                            break
                     }
                 })
                 .catch((error) => {
-                    this.signInMessage = "Произошла ошибка при выполнении запроса"
-                    console.log(error);
+                    this.$notify(
+                        {
+                            type: "danger",
+                            text: "Произошла неизвестная ошибка при выполнеии запроса"
+                        }
+                    )
+                    console.log(error)
                 });
 
         },
@@ -138,9 +166,10 @@ export default {
             var formdata = new FormData()
 
             formdata.append("code", this.userAccessCode)
+            formdata.append("token", this.signInToken)
 
             let config = {
-                url:    `${this.showApiHost}/users/checkAccessCode/`,
+                url:    `${this.showApiHost}/users/login/code/check`,
                 data:   formdata,
                 method: 'POST',
             }
@@ -149,23 +178,31 @@ export default {
                 .then((response) => {
                     switch (response.data.status) {
                         case 0:
-                            this.$router.push({ name: "Chats" })
-                            localStorage.setItem("userId", response.data.user)
-                            localStorage.setItem("token", response.data.token)
+                            localStorage.setItem("userId", response.data.userId)
+                            localStorage.setItem("sessionToken", response.data.sessionToken)
+                            this.$router.push({name: "Chats"})
                         case 1:
-                            this.signInMessage = response.data.message
-                        case 2:
-                            this.signInMessage = response.data.message
+                            this.$notify(
+                                {
+                                    type: "warn",
+                                    text: response.data.reason
+                                }
+                            )
                     }
                 })
                 .catch((error) => {
-                    this.signInMessage = "Произошла ошибка при выполнении запроса"
+                    this.$notify(
+                        {
+                            type: "danger",
+                            text: "Произошла неизвестная ошибка при выполнеии запроса"
+                        }
+                    )
                     console.log(error);
-                });
+                })
 
         },
 
-        signInButtonClicked: function() {
+        userSignUp: function() {
 
             /**
                 * Автор:        Макаров Алексей
@@ -187,7 +224,8 @@ export default {
     computed: {
 
         ...mapGetters([
-            "showApiHost"
+            "showApiHost",
+            "showRegexPatterns"
         ]),
 
         signInButtonTitle: function() {
@@ -205,7 +243,8 @@ export default {
 
     mounted() {
         document.title = "Авторизация пользователя"
-        localStorage.removeItem("token")
+        localStorage.removeItem("userId")
+        localStorage.removeItem("sessionToken")
     }
     
 }

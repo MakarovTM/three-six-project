@@ -6,11 +6,11 @@
                     <div>
                         <ul class="list-unstyled contact-list">
                             <ContactsListItem 
-                                v-for="contactItem in this.filteredContactsList" 
-                                :key="contactItem.id"
-                                :propContactId="contactItem.id"
-                                :propContactName="contactItem.contact_two.name"
-                                :propContactEmail="contactItem.contact_two.mail"
+                                v-for="contactItem in this.filteredUserContactsList" 
+                                :key="contactItem.contact_to.id"
+                                :propContactId="contactItem.contact_to.id"
+                                :propContactName="contactItem.contact_to.full_name"
+                                :propContactEmail="contactItem.contact_to.email"
                             />
                         </ul>
                     </div>
@@ -28,8 +28,6 @@
     * Описание: Отображение списка контактов пользователя
 */
 
-import { mapGetters }   from "vuex"
-
 import ContactsListItem from "@/components/ContactsListItem.vue"
 
 export default {
@@ -39,7 +37,11 @@ export default {
     },
 
     props: {
-        propContactsFilterString: {
+        propUserContactsList: {
+            type: Array,
+            required: true
+        },
+        propUserContactsListFilterString: {
             type: String,
             required: true
         }
@@ -47,20 +49,18 @@ export default {
 
     computed: {
 
-        ...mapGetters([
-            "showContactsList"
-        ]),
-
-        filteredContactsList: function() {
+        filteredUserContactsList: function() {
 
             /**
                 * Автор:    Макаров Алексей
                 * Описание: Фильтрация списка контактов по ключевому слову
             */
 
-            return this.showContactsList.filter(row => {
-                return row.contact_two.name.toLowerCase().includes(this.propContactsFilterString.toLowerCase())
-            })
+            return this.propUserContactsList.filter(
+                row => {
+                    return row.contact_to.full_name.toLowerCase().includes(this.propUserContactsListFilterString.toLowerCase()) || row.contact_to.email.toLowerCase().includes(this.propUserContactsListFilterString.toLowerCase()) 
+                }
+            )
 
         }
 

@@ -15,12 +15,6 @@ const routes = [
     },
 
     {
-        path: "/calls",
-        name: "Calls",
-        component: () => import("../views/Calls.vue")
-    },
-
-    {
         path: "/profile/:id",
         name: "Profile",
         component: () => import("../views/Profile.vue")

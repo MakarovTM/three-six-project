@@ -7,45 +7,62 @@ import axios from "axios"
 
 const state = {
 
-    profilePublic: {
-        mail: "A",
-        name: "A"
-    },
-    profilePublicLoads: false
+    profileData: null,
+    profileLoading: true,
+    profileEditModalOpened: false
 
 }
 
 const getters = {
 
-    showProfilePublic: (state) => { return state.profilePublic },
-    showProfilePublicLoadStatus: (state) => { return state.profilePublicLoads }
+    showProfileData: (state) => { return state.profileData },
+    showProfileLoadStatus: (state) => { return state.profileLoading },
+    showProfileModalStatus: (state) => { return state.profileEditModalOpened }
 
 }
 
 const actions = {
 
-    profilePublicLoad: function({ state, rootState }, userId) {
+    uploadProfileData: function({ state, rootState }, userId) {
 
         /**
             * Автор:        Макаров Алексей
             * Описание:     Загрузка профиля пользователя для публичного просмотра 
         */
 
-        state.profilePublicLoads = true
+        state.profileLoading = true
 
         let config = {
-            method: "GET",
-            url: `${rootState.apiHost}/users/userPublicView/${userId}`,
+            url:     `${rootState.apiHost}/users/show/${userId}`,
+            method:  "GET",
+            headers: {
+                "sessionToken": localStorage.getItem("sessionToken")
+            }
         }
           
         axios(config)
             .then((response) => {
-                state.profilePublicLoads = false
-                state.profilePublic = response.data.userPublicView[0]
+                switch (response.data.status) {
+                    case 0:
+                        state.profileData = response.data.record
+                        state.profileLoading = false
+                }
             })
             .catch((error) => {
                 console.log(error);
             });
+
+    },
+
+    profileEditModalUpdateStatus: function({ state }) {
+
+        /**
+            * Автор:        Макаров Алексей
+            * Описание:     Изменение статуса модального окна
+            *               по редактированию профиля пользователя    
+        */
+
+        state.profileEditModalOpened = !state.profileEditModalOpened
 
     }
 

@@ -1,7 +1,6 @@
-import axios from "axios"
-import router from '@/router/index.js'
-
 import { createStore } from 'vuex'
+
+import configRegex from "./config/config.regex"
 
 import indexChat from "./modules/index.chat"
 import indexChats from "./modules/index.chats"
@@ -25,23 +24,23 @@ export default createStore({
 
             {
                 id: 2,
-                name: "ic:baseline-phone-forwarded",
-                isActive: false,
-                routerPath: { name : "Calls" },
-            },
-
-            {
-                id: 3,
                 name: "entypo:chat",
                 isActive: false,
                 routerPath: { name : "Chats" },
             },
 
             {
-                id: 4,
+                id: 3,
                 name: "healthicons:ui-user-profile",
                 isActive: false,
-                routerPath: { name : "Profile", params: { id: localStorage.userId} },
+                routerPath: { name : "Profile", params: { id: localStorage.userId } },
+            },
+
+            {
+                id: 4,
+                name: "bx:exit",
+                isActive: false,
+                routerPath: { name : "SignIn" },
             }
 
         ]
@@ -61,47 +60,6 @@ export default createStore({
     },
 
     actions: {
-
-        checkUserSession: function({ state }) {
-
-            /**
-                * Автор:        Макаров Алексей
-                * Описание:     Выполнение проверки сессии пользователя 
-            */
-
-            let token = localStorage.getItem("token")
-            let user  = localStorage.getItem("userId")
-            
-            if (token === null || user === null) {
-                router.push({name: "SignIn"})
-            } else {
-
-                let data = new FormData()
-                data.append("token", token)
-
-                let config = {
-                    url:    `${state.apiHost}/users/checkUserSession/`,
-                    data :  data,
-                    method: "post",
-                }
-
-                axios(config)
-                    .then((response) => {
-                        switch (response.data.status) {
-                            case 1: {
-                                router.push({name: "SignIn"})
-                            }
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        router.push({name: "SignIn"})
-                    })
-
-            }
-
-
-        },
 
         updateSideBarActiveTab: function({ state }, activeSideBarId) {
 
@@ -127,6 +85,9 @@ export default createStore({
         indexChats,
         indexProfile,
         indexContacts,
+
+        configRegex,
+
     }
 
 })

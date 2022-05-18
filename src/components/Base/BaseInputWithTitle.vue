@@ -6,9 +6,15 @@
         <div class="input-group mb-3 bg-soft-light rounded-3">
             <input 
                 type="text" class="form-control form-control-lg border-light bg-soft-light"
+                :maxlength="this.propInputLength"
                 :placeholder="this.propInputPlaceholder"
                 v-model="this.inputValue"
             />
+        </div>
+        <div class="text-muted">
+            <p class="mb-4 text-danger" v-if="!this.inputValidation">
+                {{ this.propInputRegexPatternInvalidMessage }}
+            </p>
         </div>
     </div>
 </template>
@@ -32,6 +38,13 @@ export default {
 
         propInputValue: {
             type: String,
+            defaul: "",
+            required: false
+        },
+
+        propInputLength: {
+            type: Number,
+            defaul: 500,
             required: false
         },
 
@@ -39,6 +52,16 @@ export default {
             type: String,
             required: false
         },
+
+        propInputRegexPattern: {
+            type: Object,
+            required: true
+        },
+
+        propInputRegexPatternInvalidMessage: {
+            type: String,
+            required: true
+        }
 
     },
 
@@ -58,6 +81,23 @@ export default {
             */
 
             this.$emit("updateInputValue", this.inputValue)
+            this.$emit("updateInputValueValidation", this.propInputRegexPattern.test(this.inputValue))
+
+        }
+
+    },
+
+    computed: {
+
+        inputValidation: function() {
+
+            /**
+                * Автор:    Макаров Алексей
+                * Описание: Выполнение проверки поля
+                *           ввода по маске регулярного выражения
+            */
+
+            return this.propInputRegexPattern.test(this.inputValue)
 
         }
 
